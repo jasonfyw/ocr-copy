@@ -6,6 +6,10 @@ import numpy as np
 from PIL import ImageOps, ImageEnhance
 
 class OCRCopy():
+
+    """
+    Input monitoring functions
+    """
     def __init__(self):
         with keyboard.GlobalHotKeys({
             '<cmd>+<shift>+6': self.activate_shortcut
@@ -19,6 +23,9 @@ class OCRCopy():
             self.x2, self.y2 = x, y
             return False
 
+    """
+    Getting image and processing it
+    """
     def get_screenshot(self, x1, y1, x2, y2):
         if x2 >= x1 and y2 <= y1:
             bbox = (x1, y2, x2, y1)
@@ -48,18 +55,22 @@ class OCRCopy():
 
         return text
 
+    """
+    Main shortcut functionality
+    """
     def activate_shortcut(self):
         self.x1, self.x2, self.y1, self.y2 = 0, 0, 0, 0
         with mouse.Listener(on_click = self.on_click) as listener:
             listener.join()
 
-        img = self.get_screenshot(self.x1, self.y1, self.x2, self.y2)
-        img = self.preprocess_image(img)
-        text = self.recognise_text(img)
+        if not (self.x1 == self.x2 and self.y1 == self.y2):
+            img = self.get_screenshot(self.x1, self.y1, self.x2, self.y2)
+            img = self.preprocess_image(img)
+            text = self.recognise_text(img)
 
-        pyperclip.copy(text)
-        # img.show()
-    
+            pyperclip.copy(text)
+            # img.show()
+
 
 if __name__ == "__main__":
     ocrcopy = OCRCopy()
