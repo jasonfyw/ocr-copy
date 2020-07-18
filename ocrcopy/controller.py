@@ -10,12 +10,6 @@ Application controller
 """
 class Controller():
     def __init__(self):
-        # use pyglet to get information about screen dimensions and positioning
-        # self.screens = []
-        # for screen in pyglet.window.get_platform().get_default_display().get_screens():
-        #     x, y, w, h = screen.x, screen.y, screen.width, screen.height
-        #     self.screens.append((x, y, w, h))
-
         # setup overlay root app
         self.root = tk.Tk()
 
@@ -67,9 +61,12 @@ class Controller():
         ocrcopy = OCRCopy()
         del ocrcopy
 
+        self.destroy_overlays()
+
     def create_overlays(self):
-        # for screen in self.screens:
-        #     x, y, w, h = screen
+        # use pyglet to get information about screen dimensions and positioning
+        # not very efficient but after first load it gets faster
+        # for some reason it throws horribles errors if i try to do anything else with it
         for screen in pyglet.window.get_platform().get_default_display().get_screens():
             x, y, w, h = screen.x, screen.y, screen.width, screen.height
             self.overlays.append(Overlay(self.root, w, h, x, y, self.destroy_overlays))
