@@ -1,0 +1,7 @@
+pynput
+pyglet==1.3.0
+pyscreenshot
+pytesseract
+pyperclip
+numpy
+Pillow

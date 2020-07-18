@@ -2,8 +2,8 @@ import tkinter as tk
 from pynput import keyboard
 import pyglet
 
-from overlay import Overlay
-from ocrcopy import OCRCopy
+from ocrcopy.overlay import Overlay
+from ocrcopy.ocrcopy import OCRCopy
 
 """
 Application controller
@@ -70,6 +70,3 @@ class Controller():
         for screen in pyglet.window.get_platform().get_default_display().get_screens():
             x, y, w, h = screen.x, screen.y, screen.width, screen.height
             self.overlays.append(Overlay(self.root, w, h, x, y, self.destroy_overlays))
-
-if __name__ == "__main__":
-    thing = Controller()
