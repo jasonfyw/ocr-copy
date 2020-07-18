@@ -45,7 +45,10 @@ class Controller():
 
     def handle_keyrelease(self, key):
         if any([key in self.hotkey]):
-            self.activated_keys.remove(key)
+            try:
+                self.activated_keys.remove(key)
+            except KeyError:
+                self.activated_keys = self.activated_keys 
 
     """
     Destroy Toplevel overlays after shortcut finish
