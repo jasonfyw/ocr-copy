@@ -66,7 +66,8 @@ class OCRCopy():
         return img
 
     def recognise_text(self, img):
-        config = r'--oem 3 -l eng'
+        # blanket detect a bunch of common languages/scripts (at the detriment of speed)
+        config = r'--oem 3 -l eng+ara+chi_sim+chi_tra+ell+jpn+hin+rus+ces+fra'
         text = pytesseract.image_to_string(img, config = config)
 
         return text
