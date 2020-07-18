@@ -8,14 +8,81 @@ import pyglet
 import tkinter as tk
 
 
+"""
+Application controller
+"""
+class Controller():
+    def __init__(self):
+        # setup overlay root app
+        self.root = tk.Tk()
+
+        # hide root app
+        self.root.geometry('0x0')
+        self.root.withdraw()
+
+        self.overlays = []
+
+        # setup and initialised non-blocking hotkey listener
+        self.hotkey = {keyboard.Key.cmd, keyboard.Key.shift, keyboard.KeyCode(char = '6')}
+        self.activated_keys = set()
+
+        listener = keyboard.Listener(on_press = self.handle_keypress, on_release = self.handle_keyrelease)
+        listener.start()
+
+        self.root.mainloop()
+
+    """
+    Event handlers
+    """
+    def handle_keypress(self, key):
+        if any([key in self.hotkey]):
+            self.activated_keys.add(key)
+            if all(k in self.activated_keys for k in self.hotkey):
+                self.activate_shortcut()
+
+    def handle_keyrelease(self, key):
+        if any([key in self.hotkey]):
+            self.activated_keys.remove(key)
+
+    """
+    Destroy Toplevel overlays after shortcut finish
+    """
+    def destroy_overlays(self):
+        for overlay in self.overlays:
+            overlay.overlay.destroy()
+            del overlay
+        self.overlays = []
+
+
+    """
+    Upon shortcut activation
+    """
+    def activate_shortcut(self):
+        self.create_overlays()
+        ocrcopy = OCRCopy()
+        del ocrcopy
+
+    def create_overlays(self):
+        for screen in pyglet.window.get_platform().get_default_display().get_screens():
+            x, y, w, h = screen.x, screen.y, screen.width, screen.height
+            print(x, y, w, h)
+            self.overlays.append(Overlay(self.root, w, h, x, y, self.destroy_overlays))
+
+
+"""
+Class for a single overlay
+"""
 class Overlay():
-    def __init__(self, root, width, height, x, y):
+    def __init__(self, root, width, height, x, y, destroy_overlays):
         self.width, self.height = width, height
         self.x, self.y = x, y
 
         self.overlay = tk.Toplevel(root)
         self.frame = tk.Frame(self.overlay)
         self.frame.pack(fill = tk.BOTH, expand = tk.YES)
+
+        # pass in function to destroy all overlays in Controller
+        self.destroy_overlays = destroy_overlays
 
         self.rect = None
         self.rect_startx = None
@@ -24,6 +91,9 @@ class Overlay():
         self.configure_canvas()
         self.configure_overlay()
 
+    """
+    Initialise and setup translucent overlays
+    """
     def configure_canvas(self):
         self.canvas = tk.Canvas(self.frame, cursor = 'cross', bg = '#ffffff')
         self.canvas.pack(fill = tk.BOTH, expand = tk.YES)
@@ -67,40 +137,27 @@ class Overlay():
 
     def handle_button_release(self, event):
         self.canvas.delete(self.rect)
-
-class OverlayController():
-    def __init__(self):
-        self.root = tk.Tk()
-        self.root.geometry('0x0')
-        self.root.withdraw()
-
-        self.overlays = []
-        self.create_overlays()
-
-        self.root.mainloop()
-
-    def create_overlays(self):
-        for i, screen in enumerate(pyglet.window.get_platform().get_default_display().get_screens()):
-            x, y, w, h = screen.x, screen.y, screen.width, screen.height
-            self.overlays.append(Overlay(self.root, w, h, x, y))
-
-    def destroy(self):
-        for overlay in self.overlays:
-            overlay.overlay.destroy()
-            self.root.destroy()
+        # reach up to Controller and destroy overlays
+        self.destroy_overlays()
 
 
 class OCRCopy():
-
-    """
-    Input monitoring functions
-    """
     def __init__(self):
-        with keyboard.GlobalHotKeys({
-            '<cmd>+<shift>+6': self.activate_shortcut
-        }) as h:
-            h.join()
+        self.x1, self.x2, self.y1, self.y2 = 0, 0, 0, 0
+        with mouse.Listener(on_click = self.on_click) as listener:
+            listener.join()
 
+        if not (self.x1 == self.x2 and self.y1 == self.y2):
+            img = self.get_screenshot(self.x1, self.y1, self.x2, self.y2)
+            img = self.preprocess_image(img)
+            text = self.recognise_text(img)
+
+            pyperclip.copy(text)
+            img.show()
+        
+    """
+    Input monitoring function
+    """
     def on_click(self, x, y, button, pressed):
         if pressed and str(button) == 'Button.left':
             self.x1, self.y1 = x, y
@@ -112,6 +169,7 @@ class OCRCopy():
     Getting image and processing it
     """
     def get_screenshot(self, x1, y1, x2, y2):
+        # accounting for different directions to draw rectangle from
         if x2 >= x1 and y2 <= y1:
             bbox = (x1, y2, x2, y1)
         elif x2 <= x1 and y2 <= y1:
@@ -124,12 +182,14 @@ class OCRCopy():
         return img
 
     def preprocess_image(self, img):
+        # convert to greyscale
         img = img.convert('L') 
 
-        # print(np.mean(img))
+        # detect a dark background and invert image
         if np.mean(img) < 100:
             img = ImageOps.invert(img)
 
+        # increase contrast
         img = ImageEnhance.Contrast(img).enhance(1.5)
 
         return img
@@ -140,23 +200,5 @@ class OCRCopy():
 
         return text
 
-    """
-    Main shortcut functionality
-    """
-    def activate_shortcut(self):
-        self.x1, self.x2, self.y1, self.y2 = 0, 0, 0, 0
-        with mouse.Listener(on_click = self.on_click) as listener:
-            listener.join()
-
-        if not (self.x1 == self.x2 and self.y1 == self.y2):
-            img = self.get_screenshot(self.x1, self.y1, self.x2, self.y2)
-            img = self.preprocess_image(img)
-            text = self.recognise_text(img)
-
-            pyperclip.copy(text)
-            # img.show()
-
-
 if __name__ == "__main__":
-    # ocrcopy = OCRCopy()
-    thing = OverlayController()
+    ocrcopy = Controller()
