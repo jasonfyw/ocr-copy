@@ -9,7 +9,9 @@ from PIL import ImageOps, ImageEnhance
 Handles the backend stuff
 """
 class OCRCopy():
-    def __init__(self):
+    def __init__(self, langs):
+        self.langs = langs
+
         # start a mouse listener 
         self.x1, self.x2, self.y1, self.y2 = 0, 0, 0, 0
         with mouse.Listener(on_click = self.on_click) as listener:
@@ -67,7 +69,7 @@ class OCRCopy():
 
     def recognise_text(self, img):
         # blanket detect a bunch of common languages/scripts (at the detriment of speed)
-        config = r'--oem 3 -l eng+ara+chi_sim+chi_tra+ell+jpn+hin+rus+ces+fra'
+        config = '--oem 3 -l {}'.format(self.langs)
         text = pytesseract.image_to_string(img, config = config)
 
         return text

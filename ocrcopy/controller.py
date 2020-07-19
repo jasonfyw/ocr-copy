@@ -9,7 +9,10 @@ from ocrcopy.ocrcopy import OCRCopy
 Application controller
 """
 class Controller():
-    def __init__(self):
+    def __init__(self, langs = 'eng'):
+        # language arg passed to Tesseract
+        self.langs = langs
+
         # setup overlay root app
         self.root = tk.Tk()
 
@@ -58,7 +61,7 @@ class Controller():
     """
     def activate_shortcut(self):
         self.create_overlays()
-        ocrcopy = OCRCopy()
+        ocrcopy = OCRCopy(self.langs)
         del ocrcopy
 
         self.destroy_overlays()
