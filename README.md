@@ -9,6 +9,8 @@ That said, it *could* be taken and used in a direction that gives it some sembla
 
 **Currently only supported for macOS**
 
+![](media/ocrcopy_demo.gif)
+
 ## Installing
 
 ### Dependencies
