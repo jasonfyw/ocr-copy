@@ -1,6 +1,7 @@
 import tkinter as tk
 from pynput import keyboard
 import pyglet
+import platform
 
 from ocrcopy.overlay import Overlay
 from ocrcopy.ocrcopy import OCRCopy
@@ -22,8 +23,11 @@ class Controller():
 
         self.overlays = []
 
-        # setup and initialised non-blocking hotkey listener
-        self.hotkey = {keyboard.Key.cmd, keyboard.Key.shift, keyboard.KeyCode(char = '6')}
+        # setup and initialised non-blocking hotkey listener depending on OS
+        if platform.system() == 'Darwin':
+            self.hotkey = {keyboard.Key.cmd, keyboard.Key.shift, keyboard.KeyCode(char = '6')}
+        else:
+            self.hotkey = {keyboard.Key.ctrl, keyboard.Key.shift, keyboard.KeyCode(char = '6')}
         self.activated_keys = set()
 
         listener = keyboard.Listener(on_press = self.handle_keypress, on_release = self.handle_keyrelease)
