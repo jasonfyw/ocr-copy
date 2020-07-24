@@ -37,11 +37,19 @@ Additional language and script data can be installed as well to extend this prog
 More info about languages later.
 
 ### User installation
-ocr-copy is available as a PyPI package so you can install this monstrosity with minimal effort.
+Installing this monstrosity can be easily done with a few commands.
 
+First, clone the repository in whatever directory you want
 ```
-$ pip install ocr-copy
+$ git clone https://github.com/jasonfyw/ocr-copy.git
 ```
+
+Then, go into the package directory and install the package to make it executable from the command line
+```
+$ cd ocr-copy
+$ pip install -e .
+```
+This will install all the needed dependencies and afterwards, you're good to go!
 
 ## Usage
 If you've made it this far, I commend your persistence. Lucky for you, ocr-copy can be started straight from the command line.
