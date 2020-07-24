@@ -1,7 +1,7 @@
 # ocr-copy
 > a hiGhLy aDVaNceD ProGRam eMPlOyInG OpTiCal cHaRAcTeR RecOgnItiOn AnD MACHinE LEArNiNG tO InTellIgeNTly iDeNtiFy, ReaD anD CoPY TEXt
 
-This Python program brings up a selector on screen that you can use to create a box around text you want to copy. The program will then take that part of your screen, feed it into Tesseract's OCR engine and automatically copy the output to the clipboard.
+This Python program brings up a selector on screen that you can use to create a box around text you want to copy. The program will then take that part of your screen, feed it into Tesseract's OCR engine and automatically copy the output to the clipboard. Now, instead of selecting and copying text like a normal individual, you can employ the wonders of ML to needlessly do it for you!
 
 Ok, so for the most part **this program is a joke**. It's intended to be a mockery of the over-use of 'machine learning' and 'artificial intelligence' as a marketing ploy by recreating the copy text function in a painfully unnecessary and convoluted way.
 
