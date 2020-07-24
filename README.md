@@ -7,7 +7,7 @@ Ok, so for the most part **this program is a joke**. It's intended to be a mocke
 
 That said, it *could* be taken and used in a direction that gives it some semblance of a practical application. Other than that, it's a joke I wasted too much of my time on.
 
-**Currently only supported for macOS**
+**Currently only tested for macOS, but you can try on other platforms**
 
 ![](media/ocrcopy_demo.gif)
 
@@ -65,7 +65,7 @@ $ python -m ocrcopy
 *More about languages under the **Languages** section*
 
 Once the program is running, follow these steps in order to copy text:
-1. Hit the hotkey `Command + Shift + 6` to activate the selection mode
+1. Hit the hotkey `Command + Shift + 6` or `CTRL + Shift + 6` to activate the selection mode
 2. Use your cursor to make a box around text you want to copy as if you were taking a screenshot and let go
 3. ???
 4. Profit
